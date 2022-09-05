@@ -1,6 +1,10 @@
 import React from 'react';
 import axios from 'axios'
-import Carousel from 'react-bootstrap/Carousel';
+import Card from 'react-bootstrap/Card';
+import Col from 'react-bootstrap/Col';
+import Row from 'react-bootstrap/Row';
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
 class BestBooks extends React.Component {
   constructor(props) {
     super(props);
@@ -9,11 +13,37 @@ class BestBooks extends React.Component {
     }
   }
 componentDidMount=()=>{
-  axios.get('http://localhost:3001/books').then(result=>{
+  axios.get(`${process.env.REACT_APP_URL}books`).then(result=>{
 console.log(result.data)
 this.setState({
   books:result.data
 })
+  }).catch(err=>{
+    console.log(err)
+  })
+}
+handelSubmit=(e)=>{
+  e.preventDefault()
+  let obj={
+    title:e.target.title.value,
+    description:e.target.description.value,
+    status:e.target.status.value
+  }
+ axios.post(`${process.env.REACT_APP_URL}books`,obj).then(result=>{
+  this.setState({
+    books:result.data
+  })
+
+ }).catch(err=>{
+  console.log(err)
+ })
+}
+handelDelet=(id)=>{
+  axios.delete(`${process.env.REACT_APP_URL}books/${id}`).then(result=>{
+    this.setState({
+      books:result.data
+    })
+
   }).catch(err=>{
     console.log(err)
   })
@@ -26,54 +56,56 @@ this.setState({
 
     return (
       <>
-        
+        {this.state.books.length ? (<div>
+          <Form onSubmit={this.handelSubmit}>
+      <Form.Group className="mb-3" controlId="formBasicEmail">
+        <Form.Control type="text" name='title' placeholder="Enter the name of your book" />
+      </Form.Group>
+      <Form.Group className="mb-3" controlId="formBasicEmail">
+        <Form.Control type="text" name='description' placeholder="Enter the description" />
+      
+      </Form.Group>
 
-        {this.state.books.length ? (
+      <Form.Group className="mb-3" controlId="formBasicPassword">
+
+        <Form.Control type="text" name='status' placeholder="Enter the status" />
+      </Form.Group>
+      
+      <Button variant="primary" type="submit">
+        Submit
+      </Button>
+    </Form>
+        
           
+           <Row xs={1} md={3} className="g-4">
+               
+          { this.state.books.map(ele =>{
+            return(
+
+              <Col>
+          <Card>
+            <Card.Body>
+              <Card.Title>{ele.title}</Card.Title>
+              <Card.Text>
+                <p> {ele.description}</p>
+               <p>{ele.status}</p>
+               <Button variant="primary" type="submit" onClick={()=>{this.handelDelet(ele._id)}}>
+      Delet the book
+      </Button>
+              </Card.Text>
+            </Card.Body>
+          </Card>
+        </Col>
+          
+
+            )
+           })}
+          
+           </Row>
+           </div>
            
-              <Carousel fade>
-              <Carousel.Item>
-                <img
-                  className="d-block w-100"
-                  src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/A_black_image.jpg/640px-A_black_image.jpg"
-                  alt="First slide" width={'200px'} height='800px'
-                />
-                <Carousel.Caption>
-                  <h3>{this.state.books[0].title}</h3>
-                  <p>{this.state.books[0].description}</p>
-                  <p>{this.state.books[0].status}</p>
-                </Carousel.Caption>
-              </Carousel.Item>
-              <Carousel.Item>
-                <img
-                  className="d-block w-100"
-                  src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/A_black_image.jpg/640px-A_black_image.jpg"
-                  alt="Second slide" width={'200px'} height='800px'
-                />
-        
-                <Carousel.Caption>
-                <h3>{this.state.books[1].title}</h3>
-                  <p>{this.state.books[1].description}</p>
-                  <p>{this.state.books[1].status}</p>
-                </Carousel.Caption>
-              </Carousel.Item>
-              <Carousel.Item>
-                <img
-                  className="d-block w-100"
-                  src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/A_black_image.jpg/640px-A_black_image.jpg"
-                  alt="Third slide" width={'200px'} height='800px'
-                />
-        
-                <Carousel.Caption>
-                <h3>{this.state.books[2].title}</h3>
-                  <p>{this.state.books[2].description}</p>
-                  <p>{this.state.books[2].status}</p>
-                </Carousel.Caption>
-              </Carousel.Item>
-            </Carousel>
-            
-
-          
+           
+              
         ) : (
           <h3>No Books Found :(</h3>
         )}  

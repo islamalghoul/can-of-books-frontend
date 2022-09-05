@@ -22,9 +22,9 @@ Name of feature: can-of-books
 
 Estimate of time needed to complete:3h
 
-Start time:6
+Start time:7:30
 
-Finish time:9
+Finish time:10:30
 Actual time needed to complete: 9:20
 
 
