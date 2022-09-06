@@ -5,11 +5,14 @@ import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
+import Forms from './Forms';
 class BestBooks extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      books: []
+      books: [],
+      showFlag:false,
+      updateBook:{}
     }
   }
 componentDidMount=()=>{
@@ -44,6 +47,34 @@ handelDelet=(id)=>{
       books:result.data
     })
 
+  }).catch(err=>{
+    console.log(err)
+  })
+}
+handelShow=(ele)=>{
+this.setState({
+  showFlag: true,
+  updateBook:ele
+})
+}
+handelClose=()=>{
+  this.setState({
+    showFlag:false
+  })
+}
+handelUpdate=(e)=>{
+e.preventDefault()
+let id=this.state.updateBook._id
+let obj={
+  title:e.target.title.value,
+  description:e.target.description.value,
+  status:e.target.status.value}
+  axios.put(`${process.env.REACT_APP_URL}books/${id}`,obj).then(result=>{
+    console.log(result.data)
+this.setState({
+  books:result.data
+})
+this.handelClose()
   }).catch(err=>{
     console.log(err)
   })
@@ -92,6 +123,10 @@ handelDelet=(id)=>{
                <Button variant="primary" type="submit" onClick={()=>{this.handelDelet(ele._id)}}>
       Delet the book
       </Button>
+      <Button variant="primary" type="submit" onClick={()=>this.handelShow(ele)}>
+      Update the book
+      </Button>
+      <Forms show={this.state.showFlag} handelClose={this.handelClose}  updateBook={this.state.updateBook} handelUpdate={this.handelUpdate} />
               </Card.Text>
             </Card.Body>
           </Card>
