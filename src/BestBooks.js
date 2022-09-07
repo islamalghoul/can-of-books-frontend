@@ -50,7 +50,9 @@ handelSubmit=(e)=>{
  })
 }
 handelDelet=(id)=>{
-  axios.delete(`${process.env.REACT_APP_URL}books/${id}`).then(result=>{
+  const { user } = this.props.auth0;
+
+  axios.delete(`${process.env.REACT_APP_URL}books/${id}/${user.email}`).then(result=>{
     this.setState({
       books:result.data
     })
@@ -71,13 +73,15 @@ handelClose=()=>{
   })
 }
 handelUpdate=(e)=>{
+  const { user } = this.props.auth0;
 e.preventDefault()
 let id=this.state.updateBook._id
 let obj={
   title:e.target.title.value,
   description:e.target.description.value,
-  status:e.target.status.value}
-  axios.put(`${process.env.REACT_APP_URL}books/${id}`,obj).then(result=>{
+  status:e.target.status.value
+}
+  axios.put(`${process.env.REACT_APP_URL}books/${id}/${user.email}`,obj).then(result=>{
     console.log(result.data)
 this.setState({
   books:result.data
