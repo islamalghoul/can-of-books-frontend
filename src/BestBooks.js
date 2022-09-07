@@ -6,17 +6,20 @@ import Row from 'react-bootstrap/Row';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Forms from './Forms';
+import { withAuth0 } from '@auth0/auth0-react';
 class BestBooks extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      books: [],
+      books: [{}],
       showFlag:false,
       updateBook:{}
     }
   }
 componentDidMount=()=>{
-  axios.get(`${process.env.REACT_APP_URL}books`).then(result=>{
+  const { user } = this.props.auth0;
+  console.log(user.email)
+  axios.get(`${process.env.REACT_APP_URL}books/${user.email}`).then(result=>{
 console.log(result.data)
 this.setState({
   books:result.data
@@ -27,15 +30,20 @@ this.setState({
 }
 handelSubmit=(e)=>{
   e.preventDefault()
+  const { user } = this.props.auth0;
   let obj={
     title:e.target.title.value,
     description:e.target.description.value,
-    status:e.target.status.value
+    status:e.target.status.value, 
+    email:user.email,
+    name:user.name
+   
   }
  axios.post(`${process.env.REACT_APP_URL}books`,obj).then(result=>{
   this.setState({
     books:result.data
   })
+  console.log(result.data)
 
  }).catch(err=>{
   console.log(err)
@@ -83,6 +91,7 @@ this.handelClose()
 
   render() {
 
+  
     /* TODO: render all the books in a Carousel */
 
     return (
@@ -149,4 +158,4 @@ this.handelClose()
   }
 }
 
-export default BestBooks;
+export default withAuth0(BestBooks);

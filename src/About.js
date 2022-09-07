@@ -1,5 +1,5 @@
 import { Component } from "react";
-class Profile extends Component {
+class About extends Component {
 
   render() {
     /* TODO: render information about the developers */
@@ -16,4 +16,4 @@ i started to learn how to program recently, i have took an online course in java
   }
 };
 
-export default Profile;
+export default About;
